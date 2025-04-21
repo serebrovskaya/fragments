@@ -8,41 +8,31 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.test1.databinding.Fragment0Binding
-import com.example.test1.LibraryItem.Book
-import com.example.test1.LibraryItem.Newspaper
-import com.example.test1.LibraryItem.Disc
+import com.example.test1.databinding.FragmentWithRecyclerBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
-class MyFragment0: Fragment(R.layout.fragment_0) {
-    private var _binding: Fragment0Binding? = null
-    private val binding get() = _binding ?: throw RuntimeException("ReceiverFragmentBinding is NULL")
+class MyFragmentWithRecycler : Fragment() {
 
-    private val library = Library().apply {
-        addItems(
-            Book(1867, "Война и мир", true, 5202, "Лев Толстой"),
-            Book(1866, "Преступление и наказание", false, 672, "Федор Достоевский"),
-            Book(90743, "Маугли", true, 202, "Джозеф Киплинг"),
+    private var _binding: FragmentWithRecyclerBinding? = null
+    private val binding
+        get() = _binding ?: throw RuntimeException("ReceiverFragmentBinding is NULL")
 
-            Newspaper(303, "Комсомольская правда", true, 123),
-            Newspaper(923, "Московский комсомолец", false, 456),
-            Newspaper(17245, "Сельская жизнь", true, 794),
-
-            Disc(1975, "Богемская рапсодия", true, "CD"),
-            Disc(307, "Дэдпул и Росомаха", true, "DVD"),
-            Disc(2001, "Voyage", false, "CD")
-        )
-    }
-
-    private val viewModel: MyViewModel by activityViewModels()
+    private val viewModel: LibraryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = Fragment0Binding.inflate(inflater, container, false)
+        _binding = FragmentWithRecyclerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,7 +41,7 @@ class MyFragment0: Fragment(R.layout.fragment_0) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = ListAdapter(library){ item ->
+        adapter = ListAdapter(viewModel.library) { item ->
             openFragment(item)
         }
 
@@ -67,11 +57,11 @@ class MyFragment0: Fragment(R.layout.fragment_0) {
         }
 
         viewModel.selItem.observe(viewLifecycleOwner, Observer { item ->
-            library.addItem(item)
-            adapter.notifyItemInserted(library.size - 1)
+            viewModel.library.addItem(item)
+            adapter.notifyItemInserted(viewModel.library.size - 1)
 
             binding.recyclerView.post {
-                layoutManager?.scrollToPosition(library.size - 1)
+                layoutManager?.scrollToPosition(viewModel.library.size - 1)
             }
         }
         )
@@ -97,22 +87,42 @@ class MyFragment0: Fragment(R.layout.fragment_0) {
         _binding = null
     }
 
-    private fun openFragment(item: LibraryItem?, type: String = "book" ){
-        val fragment = MyFragment.newInstance(item, type)
+    private fun openFragment(item: LibraryItem?, type: String = "book") {
+        lifecycleScope.launch {
+            flow {
+                delay(300)
+                val fragment = MyFragmentForElement.newInstance(item, type)
 
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_1, fragment)
-            .addToBackStack(null)
-            .commit()
+                parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_element, fragment)
+                    .addToBackStack(null)
+                    .commit()
+
+                emit(true)
+            }
+                .flowOn(Dispatchers.IO)
+                .catch { e ->
+                    when (e) {
+                        is IllegalArgumentException ->
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Ошибка")
+                                .setNegativeButton("Ок", null)
+                                .show()
+
+                        else -> {}
+                    }
+                }
+                .collect {}
+        }
     }
 
     fun delItem(position: Int) {
-        library.removeItem(position)
-        adapter.updateList(library)
+        viewModel.library.removeItem(position)
+        adapter.updateList(viewModel.library)
     }
 
     companion object {
-        fun newInstance() = MyFragment0()
+        fun newInstance() = MyFragmentWithRecycler()
     }
 }

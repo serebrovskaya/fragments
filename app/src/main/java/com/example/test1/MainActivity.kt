@@ -1,8 +1,13 @@
 package com.example.test1
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.test1.databinding.ActivityMainBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,16 +19,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (savedInstanceState == null){
-            openFragment0()
+        if (savedInstanceState == null) {
+            openFragmentWithRecycle()
         }
     }
+    private val viewModel: LibraryViewModel by viewModels()
 
-    private fun openFragment0(){
-        val fragment = MyFragment0.newInstance()
+    private fun openFragmentWithRecycle() {
+        binding.shimmerContainer.startShimmer()
+        viewModel.loadData()
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_0, fragment)
-            .commit()
+        lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                if (!isLoading) {
+                    binding.shimmerContainer.stopShimmer()
+                    binding.shimmerContainer.visibility = View.GONE
+
+                    val fragment = MyFragmentWithRecycler.newInstance()
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_recycle, fragment)
+                        .commit()
+                }
+            }
+        }
+
     }
 }

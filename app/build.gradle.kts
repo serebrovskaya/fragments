@@ -52,4 +52,6 @@ dependencies {
 
     val fragment_version = "1.8.4"
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
+
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }

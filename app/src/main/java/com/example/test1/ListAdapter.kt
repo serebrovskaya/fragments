@@ -5,9 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test1.databinding.ItemListBinding
 
-class ListAdapter(private var items: Library,
-                  private val onItemClick: (LibraryItem) -> Unit)
-    : RecyclerView.Adapter<ListViewHolder>() {
+class ListAdapter(
+    private var items: Library,
+    private val onItemClick: (LibraryItem) -> Unit
+) : RecyclerView.Adapter<ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val binding = ItemListBinding.inflate(LayoutInflater.from(parent.context))
@@ -18,13 +19,12 @@ class ListAdapter(private var items: Library,
         val item = items[position]
 
         holder.bind(item)
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             onItemClick(item)
         }
     }
 
     override fun getItemCount(): Int = items.size
-
 
     fun updateList(newItems: Library) {
         items = newItems

@@ -22,13 +22,13 @@ class LibraryViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val mutSelItem = MutableLiveData<LibraryItem>()
+    private val selectedItem = MutableLiveData<LibraryItem>()
 
     val selItem: LiveData<LibraryItem>
-        get() = mutSelItem
+        get() = selectedItem
 
     fun generateItem (item: LibraryItem){
-        mutSelItem.value = item
+        selectedItem.value = item
     }
 
     private val items = listOf(

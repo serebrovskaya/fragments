@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 private const val ARG_TITLE = "title"
 private const val ARG_ID = "id"
-private const val ARG_AVAIL = "available"
+private const val ARG_AVAILABILITY = "available"
 private const val ARG_TYPE = "type"
 private const val ARG_NEW = "isNew"
 
@@ -28,7 +28,7 @@ class MyFragmentForElement : Fragment() {
     private var receivedNew: Boolean? = null
     private var receivedTitle: String? = null
     private var receivedId: Int? = null
-    private var receivedAvail: Boolean? = null
+    private var receivedAvailability: Boolean? = null
     private var receivedType: String? = null
 
     private var receivedPage: Int? = null
@@ -47,7 +47,7 @@ class MyFragmentForElement : Fragment() {
             arguments?.let {
                 receivedTitle = it.getString(ARG_TITLE)
                 receivedId = it.getInt(ARG_ID)
-                receivedAvail = it.getBoolean(ARG_AVAIL)
+                receivedAvailability = it.getBoolean(ARG_AVAILABILITY)
             }
 
             when (receivedType) {
@@ -97,7 +97,7 @@ class MyFragmentForElement : Fragment() {
         if (receivedNew == false) {
             binding.title.setText(arguments?.getString(ARG_TITLE))
             binding.id.setText(arguments?.getInt(ARG_ID).toString())
-            binding.availability.setText(if (receivedAvail == true) "Доступно" else "Нe доступно")
+            binding.availability.setText(if (receivedAvailability == true) "Доступно" else "Нe доступно")
             binding.buttonSaveFr.visibility = View.GONE
 
             when (receivedType) {
@@ -156,8 +156,8 @@ class MyFragmentForElement : Fragment() {
 
     }
 
-    private fun prepareLibraryItem(): LibraryItem? {
-        val isAvail: Boolean = when (binding.availability.text.toString().lowercase()) {
+    private fun prepareLibraryItem(): LibraryItem {
+        val isAvailable: Boolean = when (binding.availability.text.toString().lowercase()) {
             "да" -> true
             "нет" -> false
             else -> false
@@ -167,7 +167,7 @@ class MyFragmentForElement : Fragment() {
             resultItem = LibraryItem.Book(
                 binding.id.text.toString().toIntOrNull() ?: 0,
                 binding.title.text.toString(),
-                isAvail,
+                isAvailable,
                 binding.page.text.toString().toIntOrNull() ?: 0,
                 binding.author.text.toString()
             )
@@ -176,7 +176,7 @@ class MyFragmentForElement : Fragment() {
             resultItem = LibraryItem.Newspaper(
                 binding.id.text.toString().toIntOrNull() ?: 0,
                 binding.title.text.toString(),
-                isAvail,
+                isAvailable,
                 binding.issue.text.toString().toIntOrNull() ?: 0
             )
         }
@@ -203,7 +203,7 @@ class MyFragmentForElement : Fragment() {
                         putBoolean(ARG_NEW, false)
                         putString(ARG_TITLE, item.name)
                         putInt(ARG_ID, item.id)
-                        putBoolean(ARG_AVAIL, item.isAvailable)
+                        putBoolean(ARG_AVAILABILITY, item.isAvailable)
 
                         when (item) {
                             is LibraryItem.Book -> {

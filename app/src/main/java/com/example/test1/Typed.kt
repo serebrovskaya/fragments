@@ -33,7 +33,7 @@ class Library {
 }
 
 abstract class LibraryItem(
-    val id: Int,
+    val id: Long,
     val name: String,
     var isAvailable: Boolean,
     @DrawableRes val avatar: Int
@@ -44,22 +44,23 @@ abstract class LibraryItem(
     }
 
     class Book(
-        id: Int,
+        id: Long,
         name: String,
         isAvailable: Boolean,
         val pageCount: Int,
-        val author: String
+        val author: String,
+        val thumbnail: String = "",
     ) : LibraryItem(id, name, isAvailable, R.drawable.book)
 
     class Newspaper(
-        id: Int,
+        id: Long,
         name: String,
         isAvailable: Boolean,
         val issueNumber: Int
     ) : LibraryItem(id, name, isAvailable, R.drawable.newspaper)
 
     class Disc(
-        id: Int,
+        id: Long,
         name: String,
         isAvailable: Boolean,
         private val discType: String

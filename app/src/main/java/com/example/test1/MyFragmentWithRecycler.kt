@@ -87,7 +87,7 @@ class MyFragmentWithRecycler : Fragment() {
         _binding = null
     }
 
-    private fun openFragment(item: LibraryItem?, type: String = "book") {
+    fun openFragment(item: LibraryItem?, type: String = "book") {
         lifecycleScope.launch {
             flow {
                 delay(300)

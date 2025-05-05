@@ -19,7 +19,6 @@ internal object RetrofitHelper {
     }
 
     fun creatRetrofit():BooksApi{
-        println("!!! start retrofit")
 
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -37,8 +36,6 @@ internal object RetrofitHelper {
 
                     println("Request URL: ${request.url}")
                     val response = chain.proceed(request)
-                    println("Response code: ${response.code}")
-                    println("!!! ${request.headers}")
                     response
                 } catch (e: Exception) {
                     println("Network error: ${e.message}")

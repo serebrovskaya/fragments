@@ -129,7 +129,7 @@ class MyFragmentForElement : Fragment() {
 
             binding.buttonSaveFr.setOnClickListener {
                 val resultItem = prepareLibraryItem()
-                resultItem?.let {
+                resultItem.let {
                     viewModel.generateItem(resultItem)
                     requireActivity().supportFragmentManager.popBackStack()
                 }
@@ -165,7 +165,7 @@ class MyFragmentForElement : Fragment() {
         lateinit var resultItem: LibraryItem
         if (receivedType == "book") {
             resultItem = LibraryItem.Book(
-                binding.id.text.toString().toIntOrNull() ?: 0,
+                binding.id.text.toString().toLongOrNull() ?: 0,
                 binding.title.text.toString(),
                 isAvailable,
                 binding.page.text.toString().toIntOrNull() ?: 0,
@@ -174,7 +174,7 @@ class MyFragmentForElement : Fragment() {
         }
         if (receivedType == "newspaper") {
             resultItem = LibraryItem.Newspaper(
-                binding.id.text.toString().toIntOrNull() ?: 0,
+                binding.id.text.toString().toLongOrNull() ?: 0,
                 binding.title.text.toString(),
                 isAvailable,
                 binding.issue.text.toString().toIntOrNull() ?: 0
@@ -202,7 +202,7 @@ class MyFragmentForElement : Fragment() {
                     if (item != null) {
                         putBoolean(ARG_NEW, false)
                         putString(ARG_TITLE, item.name)
-                        putInt(ARG_ID, item.id)
+                        putLong(ARG_ID, item.id)
                         putBoolean(ARG_AVAILABILITY, item.isAvailable)
 
                         when (item) {

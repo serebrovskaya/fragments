@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.24"
 }
 
 android {
@@ -49,6 +50,15 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     val fragment_version = "1.8.4"
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
